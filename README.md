@@ -1,2 +1,2 @@
-# technical-writer-names
-json with job names related to technical writer. Can be used with sister program to find job posts containing name.
+# practical docs
+a field guide for writing documentation people use and remember.
