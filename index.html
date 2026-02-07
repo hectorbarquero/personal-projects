@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SRR tracker - Hazel report</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    body { font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; margin: 24px; }
+    h1 { margin: 0 0 6px 0; font-size: 18px; }
+    h2 { margin: 22px 0 8px 0; font-size: 14px; }
+    .muted { color:#666; font-size:12px; }
+    .canvasWrap { height: 320px; margin: 14px 0; }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; font-size: 12px; }
+    th, td { border: 1px solid #ddd; padding: 6px 8px; vertical-align: top; }
+    th { background: #f6f6f6; text-align: left; }
+    .num { text-align: right; white-space: nowrap; }
+    .note { white-space: pre-wrap; }
+    .heatWrap { display:grid; grid-template-columns: repeat(53, 10px); gap: 3px; margin-top: 10px; }
+    .heatCell { width:10px; height:10px; border-radius:2px; background:#eee; }
+  </style>
+</head>
+<body>
+  <h1>SRR tracker - Hazel report</h1>
+  <div class="muted">Generated: 2026-02-07T20:08:21.107Z</div>
+
+  <h2>SRR</h2>
+  <div class="canvasWrap"><canvas id="srrChart"></canvas></div>
+  <table>
+    <thead><tr>
+      <th>Date</th><th>SRR1</th><th>SRR2</th><th>SRR3</th><th>Syncope</th><th>Notes</th>
+    </tr></thead>
+    <tbody id="srrBody"></tbody>
+  </table>
+
+  <h2>Costs</h2>
+  <div id="heatmap"></div>
+  <div class="canvasWrap"><canvas id="costBar"></canvas></div>
+  <div class="canvasWrap"><canvas id="costLine"></canvas></div>
+  <div class="canvasWrap"><canvas id="costPie"></canvas></div>
+
+<script>
+  const DATA = {"title":"SRR tracker","generatedAt":"2026-02-07T20:08:21.107Z","srr":[{"date":"27 Sep 2025","srr1":31,"srr2":34,"srr3":38,"syncope":1,"notes":"First day of medication. One significant syncope triggered this."},{"date":"28 Sep 2025","srr1":29,"srr2":37,"srr3":23,"syncope":null,"notes":"Four coughs. Usually around eating and activity."},{"date":"29 Sep 2025","srr1":13,"srr2":23,"srr3":13,"syncope":null,"notes":"Four coughs. She coughed awake at night once."},{"date":"30 Sep 2025","srr1":18,"srr2":22,"srr3":27,"syncope":null,"notes":"Little rest during day. Coughs increase to 8 today."},{"date":"1 Oct 2025","srr1":21,"srr2":31,"srr3":26,"syncope":null,"notes":"Mechanical coughs if on back, but breathing variation returns."},{"date":"2 Oct 2025","srr1":31,"srr2":25,"srr3":26,"syncope":null,"notes":""},{"date":"3 Oct 2025","srr1":22,"srr2":25,"srr3":26,"syncope":null,"notes":"More active during daytime. Wouldn't rest."},{"date":"4 Oct 2025","srr1":24,"srr2":25,"srr3":30,"syncope":null,"notes":"Took to a different vet. Confirms diagnosis, gives shorter prognosis. Increases meds."},{"date":"5 Oct 2025","srr1":26,"srr2":27,"srr3":19,"syncope":null,"notes":"New vet recommends counting SRR only at night, not during day."},{"date":"6 Oct 2025","srr1":31,"srr2":19,"srr3":23,"syncope":null,"notes":"Wife departs for business. Hazel throws up meds from anxiety, one hour after dose."},{"date":"7 Oct 2025","srr1":26,"srr2":26,"srr3":23,"syncope":null,"notes":"Stable despite throwing up meds yesterday."},{"date":"8 Oct 2025","srr1":26,"srr2":19,"srr3":27,"syncope":null,"notes":"Coughs have been fewer, but more serious."},{"date":"9 Oct 2025","srr1":26,"srr2":25,"srr3":26,"syncope":null,"notes":"Woke to one serious cough. Stopped breathing 15 seconds."},{"date":"10 Oct 2025","srr1":19,"srr2":25,"srr3":24,"syncope":null,"notes":"Meds were late since I made the mistake of oversleeping, 1.5 hours. Stayed awake late to make up for it."},{"date":"11 Oct 2025","srr1":26,"srr2":23,"srr3":19,"syncope":null,"notes":"Pushed med time down half an hour to let her kidneys balance."},{"date":"12 Oct 2025","srr1":16,"srr2":17,"srr3":20,"syncope":null,"notes":"Med time re-established, all normal."},{"date":"13 Oct 2025","srr1":23,"srr2":25,"srr3":25,"syncope":null,"notes":"Holiday weekend. She saw her original owners to say goodbye. She seems drowsy."},{"date":"14 Oct 2025","srr1":19,"srr2":16,"srr3":20,"syncope":null,"notes":"Seems drowsy."},{"date":"15 Oct 2025","srr1":24,"srr2":25,"srr3":25,"syncope":null,"notes":"Much more active. Suddenly very alert and awake."},{"date":"16 Oct 2025","srr1":20,"srr2":23,"srr3":25,"syncope":null,"notes":"She can no longer walk longer distances in the house without coughing. She needs to break up trips into short legs of travel."},{"date":"17 Oct 2025","srr1":27,"srr2":25,"srr3":26,"syncope":null,"notes":"Her cough worsens. It's oddly dry, but very prolonged."},{"date":"18 Oct 2025","srr1":28,"srr2":25,"srr3":27,"syncope":null,"notes":"Her cough worsens. 20 coughs today."},{"date":"19 Oct 2025","srr1":34,"srr2":29,"srr3":31,"syncope":null,"notes":"SRR jumps up beyond 30. She is having a visibly more difficult time."},{"date":"20 Oct 2025","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":"Vet called. We need antitussive meds. Hazel given synthetic opioid Torbugesic because unstable at appointment. No counts, she's sedated."},{"date":"21 Oct 2025","srr1":19,"srr2":22,"srr3":24,"syncope":null,"notes":"Counts resume. All OK."},{"date":"22 Oct 2025","srr1":16,"srr2":20,"srr3":23,"syncope":null,"notes":"Missed a dose (adjusting to new timing). Started ACE inhibiter."},{"date":"23 Oct 2025","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":"No count. We started Hydrocodone today, 1 mg. We were told the count would appear irregularly low."},{"date":"24 Oct 2025","srr1":24,"srr2":26,"srr3":25,"syncope":null,"notes":"Begins to wake at night to pee."},{"date":"25 Oct 2025","srr1":28,"srr2":26,"srr3":23,"syncope":null,"notes":"We left room temperature up at night to see if better quality of sleep for her. It does not help."},{"date":"26 Oct 2025","srr1":17,"srr2":23,"srr3":19,"syncope":null,"notes":"Moved the timing of the 10 mg of furosemide to 930pm."},{"date":"27 Oct 2025","srr1":22,"srr2":24,"srr3":28,"syncope":1,"notes":"Minor syncope. Too much coughing, she was hopping on couches frequently from a guest visit."},{"date":"28 Oct 2025","srr1":25,"srr2":23,"srr3":26,"syncope":null,"notes":"Severe coughing before bed."},{"date":"29 Oct 2025","srr1":27,"srr2":25,"srr3":26,"syncope":null,"notes":"Coughing hits 10-13 times a day."},{"date":"30 Oct 2025","srr1":20,"srr2":21,"srr3":20,"syncope":null,"notes":"Coughing reduces to three or four times."},{"date":"31 Oct 2025","srr1":19,"srr2":21,"srr3":24,"syncope":null,"notes":"I missed the 2pm furosemide dose because we had a hospital appointment. I had to wait to drive my wife back."},{"date":"1 Nov 2025","srr1":21,"srr2":24,"srr3":19,"syncope":null,"notes":"Stable despite yesterdays missed dose."},{"date":"2 Nov 2025","srr1":21,"srr2":22,"srr3":22,"syncope":null,"notes":"Extreme fatigue. She slept most of the day."},{"date":"3 Nov 2025","srr1":23,"srr2":23,"srr3":24,"syncope":null,"notes":"Seems her normal self."},{"date":"4 Nov 2025","srr1":21,"srr2":20,"srr3":22,"syncope":null,"notes":"Seems her notmal self. We got the hydrocodone in pill form, made compound now."},{"date":"5 Nov 2025","srr1":19,"srr2":19,"srr3":21,"syncope":null,"notes":"Coughing awake at night. No daytime coughs."},{"date":"6 Nov 2025","srr1":28,"srr2":26,"srr3":28,"syncope":null,"notes":"I got held in meetings and could not leave. I missed the 2pm furosemide dose."},{"date":"7 Nov 2025","srr1":20,"srr2":20,"srr3":19,"syncope":null,"notes":"Stable again only one day later. Trend seems to be it can go up but resets at night"},{"date":"8 Nov 2025","srr1":20,"srr2":25,"srr3":26,"syncope":null,"notes":"Mid-day and night doses were late; seems stable"},{"date":"9 Nov 2025","srr1":20,"srr2":23,"srr3":21,"syncope":null,"notes":""},{"date":"10 Nov 2025","srr1":24,"srr2":21,"srr3":20,"syncope":null,"notes":""},{"date":"11 Nov 2025","srr1":21,"srr2":20,"srr3":18,"syncope":null,"notes":"Very low amount of coughs."},{"date":"12 Nov 2025","srr1":25,"srr2":24,"srr3":25,"syncope":null,"notes":""},{"date":"13 Nov 2025","srr1":23,"srr2":20,"srr3":20,"syncope":null,"notes":""},{"date":"14 Nov 2025","srr1":27,"srr2":20,"srr3":23,"syncope":null,"notes":""},{"date":"15 Nov 2025","srr1":27,"srr2":31,"srr3":32,"syncope":null,"notes":""},{"date":"16 Nov 2025","srr1":25,"srr2":24,"srr3":25,"syncope":null,"notes":""},{"date":"17 Nov 2025","srr1":21,"srr2":20,"srr3":null,"syncope":null,"notes":"Fell asleep. Worked overtime and couldn't stay awake."},{"date":"18 Nov 2025","srr1":17,"srr2":null,"srr3":null,"syncope":null,"notes":"Fell asleep. Worked overtime and couldn't stay awake."},{"date":"19 Nov 2025","srr1":23,"srr2":23,"srr3":21,"syncope":null,"notes":""},{"date":"20 Nov 2025","srr1":22,"srr2":21,"srr3":23,"syncope":null,"notes":""},{"date":"21 Nov 2025","srr1":23,"srr2":22,"srr3":21,"syncope":null,"notes":""},{"date":"22 Nov 2025","srr1":23,"srr2":23,"srr3":21,"syncope":null,"notes":""},{"date":"23 Nov 2025","srr1":17,"srr2":16,"srr3":16,"syncope":null,"notes":""},{"date":"24 Nov 2025","srr1":24,"srr2":25,"srr3":25,"syncope":null,"notes":""},{"date":"25 Nov 2025","srr1":18,"srr2":17,"srr3":19,"syncope":null,"notes":""},{"date":"26 Nov 2025","srr1":24,"srr2":18,"srr3":23,"syncope":null,"notes":""},{"date":"27 Nov 2025","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":"Fell asleep. Worked overtime and couldn't stay awake."},{"date":"28 Nov 2025","srr1":23,"srr2":21,"srr3":21,"syncope":null,"notes":"Diarrhea. Woke at 4am and 7am, then two more bowel movements in the day."},{"date":"29 Nov 2025","srr1":23,"srr2":25,"srr3":23,"syncope":null,"notes":"Diarrhea continues."},{"date":"30 Nov 2025","srr1":25,"srr2":20,"srr3":21,"syncope":null,"notes":"Hardly slept during the day. Seems anxious."},{"date":"1 Dec 2025","srr1":24,"srr2":25,"srr3":25,"syncope":null,"notes":""},{"date":"2 Dec 2025","srr1":25,"srr2":25,"srr3":25,"syncope":null,"notes":"Diarrhea not improving and fortiflora not helping."},{"date":"3 Dec 2025","srr1":17,"srr2":19,"srr3":null,"syncope":null,"notes":"Fell asleep. Worked overtime and couldn't stay awake."},{"date":"4 Dec 2025","srr1":20,"srr2":21,"srr3":23,"syncope":null,"notes":"Diarrhea continuing but slowly solidifying. Bowel movements are slowing."},{"date":"5 Dec 2025","srr1":20,"srr2":18,"srr3":19,"syncope":null,"notes":"Diarrhea darkens and vet is contacted about tylosin."},{"date":"6 Dec 2025","srr1":26,"srr2":23,"srr3":18,"syncope":null,"notes":"No tylosin, but probiotic (Proviable) is given."},{"date":"7 Dec 2025","srr1":22,"srr2":25,"srr3":26,"syncope":null,"notes":""},{"date":"8 Dec 2025","srr1":20,"srr2":21,"srr3":21,"syncope":null,"notes":"Only one bowel movement and it seems solid."},{"date":"9 Dec 2025","srr1":24,"srr2":25,"srr3":24,"syncope":null,"notes":"Diarrhea seems to be gone."},{"date":"10 Dec 2025","srr1":16,"srr2":18,"srr3":20,"syncope":null,"notes":"Sarah home from Toronto and Hazel coughs more in excitement."},{"date":"11 Dec 2025","srr1":26,"srr2":26,"srr3":23,"syncope":null,"notes":"Coughs during the day seem to increase."},{"date":"12 Dec 2025","srr1":20,"srr2":20,"srr3":19,"syncope":null,"notes":"Went to vet because she has been increasingly crying and hiding. Seems in pain. Wouldnt eat or settle. No issues found, imaging okay."},{"date":"13 Dec 2025","srr1":22,"srr2":20,"srr3":20,"syncope":null,"notes":"She's eating again, but she's still not her normal self. She seems uncomfortable despite clear bill of health."},{"date":"14 Dec 2025","srr1":20,"srr2":22,"srr3":26,"syncope":null,"notes":"Caught her hiding upstairs. Final count was not in deep rest."},{"date":"15 Dec 2025","srr1":26,"srr2":22,"srr3":20,"syncope":null,"notes":"She gets probiotic; proviable. 2ml. Only two rounds of diarrhea, 5am and 8am, but seems constipated now."},{"date":"16 Dec 2025","srr1":26,"srr2":23,"srr3":22,"syncope":null,"notes":""},{"date":"17 Dec 2025","srr1":20,"srr2":17,"srr3":16,"syncope":null,"notes":"Her diarrhea returns in a minor episode, but probiotic seems to work and she only has two bowel movements."},{"date":"18 Dec 2025","srr1":23,"srr2":null,"srr3":null,"syncope":null,"notes":"Fell asleep, failed to get the final two counts. Worked overtime and couldn't stay awake."},{"date":"19 Dec 2025","srr1":26,"srr2":25,"srr3":25,"syncope":null,"notes":"Measurements were taken when she wasn't in a state of deep rest."},{"date":"20 Dec 2025","srr1":25,"srr2":25,"srr3":23,"syncope":null,"notes":""},{"date":"21 Dec 2025","srr1":17,"srr2":26,"srr3":28,"syncope":null,"notes":"She didn't take her morning meds. She tasted the hydrocodone and rejected it. Absorbed maybe 20% of hydrocodone and furosemide in morning."},{"date":"22 Dec 2025","srr1":16,"srr2":23,"srr3":22,"syncope":null,"notes":"Her evening dose was mixed up: 7pm was all and final, accidentally including furosemide. 9pm furosemide never happened."},{"date":"23 Dec 2025","srr1":23,"srr2":20,"srr3":16,"syncope":1,"notes":"She had a minor presyncope in the morning. Vasodilation from meds."},{"date":"24 Dec 2025","srr1":20,"srr2":20,"srr3":18,"syncope":null,"notes":"Holidays - she's anxious, we don't leave her alone very long. She doesn't have diarrhea since we use probiotic in advance."},{"date":"25 Dec 2025","srr1":16,"srr2":22,"srr3":17,"syncope":null,"notes":"Holidays - she's anxious, we don't leave her alone very long. She doesn't have diarrhea since we use probiotic in advance."},{"date":"26 Dec 2025","srr1":19,"srr2":17,"srr3":18,"syncope":null,"notes":"Switched to chicken for pill delivery. Steak might have been causing fat related colitis flare ups."},{"date":"27 Dec 2025","srr1":20,"srr2":20,"srr3":20,"syncope":null,"notes":"Stopped hydrocodone. We're using chicken for pill delivery, harder to deliver in chicken. She can find it and denies it."},{"date":"28 Dec 2025","srr1":20,"srr2":20,"srr3":20,"syncope":null,"notes":"She seems better without hydrocodone. More herself, less bothered and lethargic. She has appetite, and didn't cough."},{"date":"29 Dec 2025","srr1":17,"srr2":21,"srr3":17,"syncope":null,"notes":"Stomach normal."},{"date":"30 Dec 2025","srr1":20,"srr2":17,"srr3":17,"syncope":null,"notes":"Stomach normal. She had three bowel movements, the final stool was getting soft again. Will monitor tomorrow."},{"date":"31 Dec 2025","srr1":17,"srr2":18,"srr3":20,"syncope":null,"notes":"We stay home with her to spend new years eve together."},{"date":"1 Jan 2026","srr1":19,"srr2":19,"srr3":19,"syncope":null,"notes":"Day 98"},{"date":"2 Jan 2026","srr1":19,"srr2":19,"srr3":20,"syncope":null,"notes":"Diarrhea back in the evening. We start the probiotic paste again tomorrow."},{"date":"3 Jan 2026","srr1":26,"srr2":19,"srr3":16,"syncope":null,"notes":"She has a cough again, but unknown if mechanical or not yet. Day 100."},{"date":"4 Jan 2026","srr1":20,"srr2":17,"srr3":17,"syncope":null,"notes":"Diarrhea and coughs improve."},{"date":"5 Jan 2026","srr1":17,"srr2":21,"srr3":17,"syncope":null,"notes":"Stomach is back to normal."},{"date":"6 Jan 2026","srr1":17,"srr2":18,"srr3":20,"syncope":null,"notes":""},{"date":"7 Jan 2026","srr1":25,"srr2":25,"srr3":25,"syncope":null,"notes":"Big snow melt, she starts to explore the yard more. Slowly, no running."},{"date":"8 Jan 2026","srr1":19,"srr2":19,"srr3":19,"syncope":null,"notes":""},{"date":"9 Jan 2026","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":"We fell asleep, we had been waking earlier for work and couldn't stay awake."},{"date":"10 Jan 2026","srr1":25,"srr2":26,"srr3":27,"syncope":null,"notes":"We find one old and dried up 10 mg furosemide on the couch. Must have fallen out of chicken pocket. We have no clue how old it is, but it's dry and we think old."},{"date":"11 Jan 2026","srr1":22,"srr2":19,"srr3":25,"syncope":null,"notes":"We expand her harness, she's now 6.3 kg when she used to be 5.8 kg. We underfeed and use expensive low-fat diet, but without walks the weight is slowly adding. She still wears it well, but its slightly noticeable and required adjusting her harness."},{"date":"12 Jan 2026","srr1":20,"srr2":19,"srr3":19,"syncope":null,"notes":"Coughs are returning, and they aren't mechanical. She's laying on her stomach when they start."},{"date":"13 Jan 2026","srr1":31,"srr2":29,"srr3":26,"syncope":null,"notes":"First elevated breathing spike. We took several counts, it was consistent in deep and light sleep. Monitoring for changes to meds."},{"date":"14 Jan 2026","srr1":30,"srr2":25,"srr3":24,"syncope":null,"notes":""},{"date":"15 Jan 2026","srr1":21,"srr2":20,"srr3":22,"syncope":null,"notes":"Found some furosemide in her chair. We think maybe she didn't take the full dose and hid it."},{"date":"16 Jan 2026","srr1":18,"srr2":16,"srr3":18,"syncope":null,"notes":"We comb the eating area after her meds, not just monitoring visually now. She bounces back to stable after the recent uptick in missed dose."},{"date":"17 Jan 2026","srr1":25,"srr2":25,"srr3":19,"syncope":null,"notes":""},{"date":"18 Jan 2026","srr1":21,"srr2":25,"srr3":21,"syncope":null,"notes":""},{"date":"19 Jan 2026","srr1":19,"srr2":22,"srr3":20,"syncope":null,"notes":""},{"date":"20 Jan 2026","srr1":21,"srr2":20,"srr3":19,"syncope":null,"notes":""},{"date":"21 Jan 2026","srr1":26,"srr2":22,"srr3":null,"syncope":null,"notes":"Fell asleep on the last count, we were tired from overtime."},{"date":"22 Jan 2026","srr1":25,"srr2":24,"srr3":24,"syncope":null,"notes":""},{"date":"23 Jan 2026","srr1":17,"srr2":17,"srr3":18,"syncope":null,"notes":""},{"date":"24 Jan 2026","srr1":22,"srr2":20,"srr3":19,"syncope":null,"notes":"We get a vet followup for her blood; it's doing well. No signs of medication problems. A new arrythmia is detected. New prognosis is 6-9 months."},{"date":"25 Jan 2026","srr1":20,"srr2":20,"srr3":18,"syncope":null,"notes":"Her stomach has been improving on the new prebiotic, not just probiotic."},{"date":"26 Jan 2026","srr1":16,"srr2":22,"srr3":17,"syncope":null,"notes":""},{"date":"27 Jan 2026","srr1":19,"srr2":17,"srr3":18,"syncope":null,"notes":"We go to the groomer in lobo with the vets approval. She's stable to travel for short trips. She doesn't cough the entire time."},{"date":"28 Jan 2026","srr1":20,"srr2":20,"srr3":20,"syncope":null,"notes":""},{"date":"29 Jan 2026","srr1":20,"srr2":20,"srr3":20,"syncope":null,"notes":""},{"date":"30 Jan 2026","srr1":17,"srr2":21,"srr3":17,"syncope":null,"notes":""},{"date":"31 Jan 2026","srr1":20,"srr2":17,"srr3":17,"syncope":null,"notes":""},{"date":"1 Feb 2026","srr1":17,"srr2":18,"srr3":20,"syncope":null,"notes":""},{"date":"2 Feb 2026","srr1":25,"srr2":25,"srr3":19,"syncope":1,"notes":"She fell roughly 4 feet. We dont know if lost footing, or if she passed out."},{"date":"3 Feb 2026","srr1":21,"srr2":25,"srr3":21,"syncope":null,"notes":"Her tail won't go up, and she seems sore. We suspect cold tail/sacrum nerve pain."},{"date":"4 Feb 2026","srr1":19,"srr2":22,"srr3":20,"syncope":null,"notes":"She starts pain medication, two daily gabapentin doses of 50mg for 7 days."},{"date":"5 Feb 2026","srr1":26,"srr2":18,"srr3":19,"syncope":null,"notes":"Her diarrhea returns from the gabapentin. Her tail won't go up so we start bathing her after each bowel movement."},{"date":"6 Feb 2026","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":""},{"date":"7 Feb 2026","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":""},{"date":"8 Feb 2026","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":""},{"date":"9 Feb 2026","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":""},{"date":"10 Feb 2026","srr1":null,"srr2":null,"srr3":null,"syncope":null,"notes":""}],"costs":[{"date":"27 Sep 2025","item":"Emergency","notes":"This was her first syncope event and included imaging, bloodwork, tests and emergency costs.","cost":1239.77},{"date":"Oct 4 2025","item":"Vetmedin and Furosemide","notes":"Second opinion, followup from first event. Receive rabies, medication assessments and updated prognosis (wose than first)","cost":126},{"date":"Oct 4 2025","item":"Furosemide","notes":"Standard human medication, low cost. 20mg pills, dosing to vary","cost":23.39},{"date":"Oct 4 2025","item":"Vetmedin","notes":"1.25mg, caps.","cost":103.4},{"date":"Oct 20 2025","item":"Imaging and diagnostics","notes":"Followup to her initial emergency visit after waiting the recommended time. Third opinion, it was worser than the first. Received corrected medication.","cost":493.84},{"date":"Oct 22 2025","item":"Cardalis","notes":"imaging and diagnostics were okay and cardalis was recommended to improve longevity and quality of life. 2.5mg cardalis benazepril HCI, 20mg spironolactone","cost":95.94},{"date":"Oct 29 2025","item":"Imaging and diagnostics","notes":"Followup required after initial dosing to check kidneys and renal panel. Administer cardalis to help dependant on tests.","cost":133.63},{"date":"Nov 4 2025","item":"Hydrocodone","notes":"2.5mg hydrocodone compounded to pill form, and 1.25mg vetmedin, caps.","cost":115.6},{"date":"Nov 4 2025","item":"Vetmedin","notes":"1.25mg, caps.","cost":103.4},{"date":"Nov 12 2025","item":"Cardalis","notes":"2.5mg cardalis benazepril HCI, 20mg spironolactone","cost":95.94},{"date":"Nov 17 2025","item":"Furosemide","notes":"Standard human medication, low cost. 20mg pills, dosing to vary","cost":23.39},{"date":"Dec 1 2025","item":"Vetmedin","notes":"1.25mg, caps.","cost":103.4},{"date":"Dec 9 2025","item":"Probiotics","notes":"We needed something to stop the diarrhea, which is happening more with the meds it seems. Proviable is a diarrhea response kit.","cost":44.78},{"date":"Dec 12 2025","item":"Imaging and diagnostics","notes":"She started to whine and cry more. She was seeking hiding places, and they weren't places she'd hang out normally. She couldn't settle.","cost":529.31},{"date":"Dec 17 2025","item":"Hydrocodone","notes":"2.5mg hydrocodone compounded to pill form","cost":115.6},{"date":"Dec 23 2025","item":"Furosemide","notes":"Standard human medication, low cost. 20mg pills, dosing to vary","cost":23.39},{"date":"Dec 30 2025","item":"Probiotics","notes":"Proviable is a diarrhea response kit","cost":44.78},{"date":"Dec 30 2025","item":"Vetmedin","notes":"1.25mg, caps.","cost":103.4},{"date":"13 Jan 2026","item":"Cardalis","notes":"2.5mg cardalis benazepril HCI, 20mg spironolactone","cost":101.14},{"date":"22 Jan 2026","item":"Imaging and diagnostics","notes":"IDX- Chem 10/CBC/Lytes-Sick. NSAID screen. Blood returns normal, new arrythmia detected.","cost":232.19},{"date":"22 Jan 2026","item":"Probiotics","notes":"Needed to upgrade to ProCare GI satchets, 5g. Proviable and Fortiflora were no longer working.","cost":0}]};
+
+  const esc = (s) => String(s ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+
+  function parseDateLoose(s) {
+    const d = new Date(s);
+    if (!isNaN(d)) return d;
+    const m = String(s).match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/);
+    if (m) return new Date(`${m[2]} ${m[1]} ${m[3]}`);
+    return new Date(NaN);
+  }
+
+  function bucketForItem(item) {
+    const s = (item||"").toLowerCase();
+    if (s.includes("imaging") || s.includes("diagnostic")) return "Imaging/Diagnostics";
+    if (s.includes("emergency")) return "Emergency";
+    if (s.includes("vetmedin")) return "Vetmedin";
+    if (s.includes("furosemide")) return "Furosemide";
+    if (s.includes("cardalis")) return "Cardalis";
+    if (s.includes("hydrocodone")) return "Hydrocodone";
+    if (s.includes("proviable")) return "Proviable";
+    return "Other";
+  }
+
+  // SRR
+  const srr = DATA.srr || [];
+  new Chart(document.getElementById("srrChart"), {
+    type:"line",
+    data:{
+      labels: srr.map(r => r.date),
+      datasets:[
+        { label:"SRR1", data: srr.map(r=>r.srr1), borderWidth:1.5, pointRadius:0, spanGaps:true },
+        { label:"SRR2", data: srr.map(r=>r.srr2), borderWidth:1.5, pointRadius:0, spanGaps:true },
+        { label:"SRR3", data: srr.map(r=>r.srr3), borderWidth:1.5, pointRadius:0, spanGaps:true }
+      ]
+    },
+    options:{ responsive:true, maintainAspectRatio:false, interaction:{mode:"index",intersect:false} }
+  });
+
+  document.getElementById("srrBody").innerHTML = srr.map(r => `
+    <tr>
+      <td>${esc(r.date)}</td>
+      <td class="num">${r.srr1 ?? ""}</td>
+      <td class="num">${r.srr2 ?? ""}</td>
+      <td class="num">${r.srr3 ?? ""}</td>
+      <td class="num">${r.syncope ?? ""}</td>
+      <td class="note">${esc(r.notes)}</td>
+    </tr>
+  `).join("");
+
+  // Costs heatmap
+  const costs = DATA.costs || [];
+  const daily = new Map();
+  for (const r of costs) {
+    const d = parseDateLoose(r.date);
+    if (isNaN(d)) continue;
+    const k = d.toISOString().slice(0,10);
+    daily.set(k, (daily.get(k)||0) + (r.cost||0));
+  }
+  function heatColor(level) { return ["#eee","#c6dbef","#9ecae1","#6baed6","#2171b5"][level]; }
+
+  const keys = [...daily.keys()].sort();
+  if (keys.length) {
+    const start = new Date(keys[0]);
+    start.setDate(start.getDate() - start.getDay());
+    const end = new Date(keys[keys.length-1]);
+    const days = [];
+    for (let d=new Date(start); d<=end; d.setDate(d.getDate()+1)) {
+      const k = d.toISOString().slice(0,10);
+      days.push({ k, v: daily.get(k)||0 });
+    }
+    const max = Math.max(...days.map(x=>x.v));
+    const wrap = document.createElement("div");
+    wrap.className = "heatWrap";
+    for (const {k,v} of days) {
+      const lvl = v<=0 ? 0 : Math.min(4, Math.ceil((v/max)*4));
+      const cell = document.createElement("div");
+      cell.className = "heatCell";
+      cell.style.background = heatColor(lvl);
+      cell.title = `${k}: $${v.toFixed(2)}`;
+      wrap.appendChild(cell);
+    }
+    document.getElementById("heatmap").appendChild(wrap);
+  }
+
+  // Costs aggregation
+  const byBucket = {};
+  for (const r of costs) {
+    const b = bucketForItem(r.item);
+    byBucket[b] = (byBucket[b]||0) + (r.cost||0);
+  }
+  const bLabels = Object.keys(byBucket);
+  const bValues = bLabels.map(k => byBucket[k]);
+
+  new Chart(document.getElementById("costBar"), { type:"bar", data:{ labels:bLabels, datasets:[{ data:bValues, label:"Total spend" }] }});
+  new Chart(document.getElementById("costPie"), { type:"pie", data:{ labels:bLabels, datasets:[{ data:bValues }] }});
+
+  // Line (entry + cumulative)
+  const sorted = [...costs].sort((a,b)=>parseDateLoose(a.date)-parseDateLoose(b.date));
+  let run = 0;
+  const cumulative = sorted.map(r => (run += (r.cost||0)));
+  new Chart(document.getElementById("costLine"), {
+    type:"line",
+    data:{
+      labels: sorted.map(r=>r.date),
+      datasets:[
+        { label:"Entry", data: sorted.map(r=>r.cost||0), borderWidth:1.5, pointRadius:2 },
+        { label:"Cumulative", data: cumulative, borderWidth:1.5, pointRadius:0 }
+      ]
+    }
+  });
+</script>
+</body>
+</html>
