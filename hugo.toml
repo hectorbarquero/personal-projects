@@ -1,0 +1,4 @@
+baseURL = "https://hectorbarquero.github.io/hazel-chf/"
+languageCode = "en-us"
+title = "Hazel CHF"
+theme = "blowfish"
