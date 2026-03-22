@@ -1,0 +1,28 @@
+disabled = false
+languageCode = "en"
+languageName = "English"
+weight = 1
+# title = ""
+
+[params]
+  displayName = "EN"
+  isoCode = "en"
+  rtl = false
+  dateFormat = "2 January 2006"
+  # logo = "img/logo.png"
+  # secondaryLogo = "img/secondary-logo.png"
+  # description = "My awesome website"
+  copyright = "&copy; 2026 Hector Barquero. All Rights Reserved."
+
+[params.author]
+    name = "Hector Barquero"
+    image = "bw-full-center.png"
+#   imageQuality = 96
+    headline = "Docs Platform Engineer & Systems Automation | Senior Technical Writer @ DE"
+#   bio = "A little bit about you"
+   links = [
+     { github = "https://github.com/hectorbarquero" },
+     { linkedin = "https://www.linkedin.com/in/hectorbarquero/" },
+     { reddit = "https://www.reddit.com/user/developeradvacado/" },
+     { youtube = "https://www.youtube.com/@developeradvacado" },
+   ]
