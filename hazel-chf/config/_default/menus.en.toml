@@ -11,22 +11,22 @@
 # ordered by weight from lowest to highest.
 
 [[main]]
-   name = "Home"
+   name = "home"
    pageRef = "/"
    weight = 1
 
 [[main]]
-   name = "Hazel-CHF"
-   pageRef = ""
+   name = "hazels-chf"
+   pageRef = "hazels-chf"
    weight = 2
 
 [[main]]
-   name = "Projects"
+   name = "projects"
    pageRef = "projects"
    weight = 3
 
 [[main]]
-   name = "Resume"
+   name = "resume"
    pageRef = "resume"
    weight = 4
 
