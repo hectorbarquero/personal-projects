@@ -1,5 +1,5 @@
 ---
-description: This is where I put my projects.
+description: Projects hosts the portfolio page for my various projects that I'm actively working on.
 showHero : true
 heroStyle : basic
 ---

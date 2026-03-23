@@ -12,11 +12,17 @@ Unknown to us, she had been silently coping with Congestive Heart Failure, and w
 This project tracks the journey and shares more insight into CHF in dogs since many may not recognize symptoms or know what to expect.
 
 ## About Hazel
+![Picture of Hazel being rescued from Niagara](/images/hazel-paws.png)
+
 I can't start this project without sharing a bit of information about her. We all say our dogs are special, and Hazel is no different.
 
 ## How the project is split
 
+
+
 ## Data overview
+
+
 
 ## Graphs
 
